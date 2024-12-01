@@ -2,12 +2,24 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main", "develop"]
+    branches: [ "main", "staging", "develop"]
   workflow_dispatch:
 
 jobs:
+  # TESTSONARCLOUD:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #     with:
+  #       fetch-depth: 0
+  #   - name: SonarCloud Scan
+  #     uses: sonarsource/sonarcloud-github-action@v3.1.0 
+  #     env:
+  #       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   BUILD:
     runs-on: ubuntu-latest
+    # needs: TESTSONARCLOUD  
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -23,7 +35,11 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Extract branch name
+      shell: bash
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      id: extract_branch
     - name: Build and Push Docker Image 
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/shipping-service${{ github.ref }}:latest .
-        docker push ${{ secrets.DOCKER_USERNAME }}/shipping-service${{ github.ref }}:latest
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/shipping-service-${{steps.extract_branch.outputs.branch}}:latest .
+        docker push ${{ secrets.DOCKER_USERNAME }}/shipping-service-${{steps.extract_branch.outputs.branch}}:latest
