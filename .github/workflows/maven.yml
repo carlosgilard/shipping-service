@@ -60,4 +60,4 @@ jobs:
         run: npm install -g newman
 
       - name: Run Postman tests
-        run: newman run postman-collection.json --env-var baseUrl=http://http://54.236.28.145:8080/shipping/c
+        run: newman run postman-collection.json --env-var baseUrl=http://http://54.236.28.145:8080
