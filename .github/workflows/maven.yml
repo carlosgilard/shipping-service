@@ -60,4 +60,6 @@ jobs:
         run: npm install -g newman
 
       - name: Run Postman tests
-        run: newman run postman-collection.json --env-var baseUrl=52.200.45.230:8080
+        env:
+          BASE_URL: ${{ vars.BASE_URL }}
+        run: newman run postman-collection.json --env-var baseUrl=$BASE_URL
