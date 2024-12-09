@@ -59,15 +59,16 @@ jobs:
       - name: Install Newman
         run: npm install -g newman
       - name: Set BASE_URL based on branch
+        id: set_base_url
         run: |
           if [ "${{ steps.extract_branch.outputs.branch }}" == "main" ]; then
-            echo "BASE_URL=${{ vars.MAIN_URL }}" >> $GITHUB_ENV
+            echo "base_url=${{ vars.MAIN_URL }}" >> $GITHUB_OUTPUT
           elif [ "${{ steps.extract_branch.outputs.branch }}" == "develop" ]; then
-            echo "BASE_URL=${{ vars.DEVELOP_URL }}" >> $GITHUB_ENV
+            echo "base_url=${{ vars.DEVELOP_URL }}" >> $GITHUB_OUTPUT
           elif [ "${{ steps.extract_branch.outputs.branch }}" == "staging" ]; then
-            echo "BASE_URL=${{ vars.STAGING_URL }}" >> $GITHUB_ENV
+            echo "base_url=${{ vars.STAGING_URL }}" >> $GITHUB_OUTPUT
           fi
       - name: Run Postman tests
         env:
-          BASE_URL: ${{ vars.BASE_URL }}
+          BASE_URL: ${{ steps.set_base_url.outputs.base_url }}
         run: newman run postman-collection.json --env-var baseUrl=$BASE_URL
