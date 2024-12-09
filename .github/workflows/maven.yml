@@ -73,4 +73,4 @@ jobs:
       - name: Run Postman tests
         env:
           BASE_URL: ${{ steps.base_url.outputs.BASE_URL }}
-        run: newman run postman-collection.json --env-var baseUrl=$BASE_URL
+        run: newman run postman-collection.json --env-var baseUrl=$BASE_URL 
